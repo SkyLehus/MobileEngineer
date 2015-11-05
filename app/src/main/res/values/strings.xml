@@ -6,4 +6,25 @@
 
     <string name="action_settings">Настройки</string>
     <string name="title_activity_registration">Регистрация</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_login">Вход</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_login">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Вход</string>
+    <string name="error_invalid_login">Не верный логин</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">Введите пароль</string>
+    <string name="error_incorrect_password">Не верный пароль</string>
+    <string name="error_field_required">Обязательное поле</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="prompt_pin">ПИН код (4 цифры)</string>
+    <string name="action_save">Сохранить</string>
+    <string name="register_helptext">Для входа в систему введите доменный логин с учетом регистра и пароль</string>
+    <string name="register_pin_helptext">При следующем входе потребуется только ПИН код</string>
 </resources>
