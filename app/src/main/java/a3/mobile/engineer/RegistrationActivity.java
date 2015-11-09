@@ -8,6 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONArray;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -31,7 +34,23 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
         clearFields();
-        finish();
+
+        SSMService ssm = new SSMService(RegistrationActivity.this, "Administrator", "Qwerty123",
+                new SSMService.AsyncResponse() {
+                    @Override
+                    public void processFinish(JSONArray output) {
+                        if (output != null){
+
+                            DatabaseHepler db = new DatabaseHepler(RegistrationActivity.this, null, null, 1);
+                            db.updateFilters(output);
+
+                            //Toast.makeText(RegistrationActivity.this, output, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+        ssm.getFilterList();
+
+        //finish();
     }
 
     private void clearFields() {

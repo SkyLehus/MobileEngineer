@@ -11,12 +11,21 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
-class SSMSErvice extends AsyncTask<String, String, JSONObject> {
+
+class SSMService extends AsyncTask<String, String, JSONArray> {
+
+
+    public interface AsyncResponse {
+        void processFinish(JSONArray output);
+    }
+
+    public AsyncResponse delegate = null;
 
     JSONParser jsonParser = new JSONParser();
 
@@ -32,11 +41,14 @@ class SSMSErvice extends AsyncTask<String, String, JSONObject> {
     private String login;
     private String password;
     private ProgressDialog pDialog;
-    private ProgressDialog progressDialog;
+    public String progressMessage = "Загрузка...";
 
     private HashMap<String, String> params = new HashMap<>();
 
-    public SSMSErvice(Context context, String login, String password){
+    public SSMService (Context context, String login, String password, AsyncResponse delegate){
+
+        this.delegate = delegate;
+
         this.context=context;
         this.login=login;
         this.password=password;
@@ -50,12 +62,12 @@ class SSMSErvice extends AsyncTask<String, String, JSONObject> {
     public void checkConnection() {
         params.put("Action","CHECK_AUTH");
         params.put("Fields[FilterID]", "123");
-
         this.execute();
     }
 
     public void getFilterList() {
-
+        params.put("Action", "GET_FILTER_LIST");
+        this.execute();
     }
 
     public void getList(String FilterID) {
@@ -96,20 +108,21 @@ class SSMSErvice extends AsyncTask<String, String, JSONObject> {
 
     @Override
     protected void onPreExecute() {
+        Log.d("SSMSERVICE","onPreExecute");
         pDialog = new ProgressDialog(context);
-        pDialog.setMessage("Загрузка...");
+        pDialog.setMessage(progressMessage);
         pDialog.setIndeterminate(false);
-        pDialog.setCancelable(true);
+        pDialog.setCancelable(false);
         pDialog.show();
     }
 
     @Override
-    protected JSONObject doInBackground(String... args) {
+    protected JSONArray doInBackground(String... args) {
 
         try {
-            Log.d("request", "starting");
+            Log.d("SSMSERVICE","doInBackground");
 
-            JSONObject json = jsonParser.makeHttpRequest(
+            JSONArray json = jsonParser.makeHttpRequest(
                     TARGET_URL, "POST", params);
 
             if (json != null) {
@@ -125,7 +138,10 @@ class SSMSErvice extends AsyncTask<String, String, JSONObject> {
         return null;
     }
 
-    protected void onPostExecute(JSONObject json) {
+    @Override
+    protected void onPostExecute(JSONArray json) {
+
+        Log.d("SSMSERVICE","onPostExecute");
 
         int success = 0;
         String message = "";
@@ -135,22 +151,29 @@ class SSMSErvice extends AsyncTask<String, String, JSONObject> {
         }
 
         if (json != null) {
-            Toast.makeText(context, json.toString(),
-                    Toast.LENGTH_LONG).show();
+            /*Toast.makeText(context, json.toString(),
+                    Toast.LENGTH_LONG).show();*/
 
-            try {
-                success = json.getInt(TAG_SUCCESS);
-                message = json.getString(TAG_MESSAGE);
+            /*try {
+                //success = json.getInt(TAG_SUCCESS);
+                //message = json.getString(TAG_MESSAGE);
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
+            delegate.processFinish(json);
+
+        } else {
+            Log.d("SSMSERVICE", "NULL");
+            delegate.processFinish(null);
         }
 
-        if (success == 1) {
-            Log.d("Success!", message);
+        /*if (success == 1) {
+            Log.d("SSMService Success!", message);
+            delegate.processFinish(json.toString());
         }else{
-            Log.d("Failure", message);
-        }
+            Log.d("SSMService Failure", message);
+            delegate.processFinish(json.toString());
+        }*/
     }
 
 }

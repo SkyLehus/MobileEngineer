@@ -1,6 +1,8 @@
 package a3.mobile.engineer;
 
 import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedInputStream;
@@ -23,10 +25,11 @@ public class JSONParser {
     StringBuilder result = new StringBuilder();
     URL urlObj;
     JSONObject jObj = null;
+    JSONArray jArr = null;
     StringBuilder sbParams;
     String paramsString;
 
-    public JSONObject makeHttpRequest(String url, String method,
+    public JSONArray makeHttpRequest(String url, String method,
                                       HashMap<String, String> params) {
 
         sbParams = new StringBuilder();
@@ -122,12 +125,12 @@ public class JSONParser {
 
         // try parse the string to a JSON object
         try {
-            jObj = new JSONObject(result.toString());
+            jArr = new JSONArray(result.toString());
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
 
         // return JSON Object
-        return jObj;
+        return jArr;
     }
 }

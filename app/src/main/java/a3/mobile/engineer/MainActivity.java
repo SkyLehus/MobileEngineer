@@ -34,8 +34,8 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<HashMap<String, Object>> mList;
 
     private void refreshData(){
-        SSMSErvice ssm = new SSMSErvice(MainActivity.this, "Administrator","Qwerty123");
-        ssm.checkConnection();
+        //SSMSErvice ssm = new SSMSErvice(MainActivity.this, "Administrator","Qwerty123");
+        //ssm.checkConnection();
 
 
     }
@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity
 
         if (versionDB != versionName) {
             // переход к регистрации
-
             Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
             startActivityForResult(intent,RESULT_CODE);
         } else {
