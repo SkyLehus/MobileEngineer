@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +21,11 @@ public class DatabaseHepler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "engineer.db";
     private static final String TBL_PARAM = "TBL_PARAM";
+
     private static final String TBL_FILTERS = "TBL_FILTERS";
+    private static final String COL_FILTER_ID = "FILTER_ID";
+    private static final String COL_FILTER_NAME = "FILTER_NAME";
+    private static final String COL_FILTER_QUAL = "FILTER_QUAL";
 
     public DatabaseHepler(Context context, String name,
                        SQLiteDatabase.CursorFactory factory, int version) {
@@ -28,14 +33,35 @@ public class DatabaseHepler extends SQLiteOpenHelper {
     }
 
 
-    public void updateFilters(JSONArray jFilters) throws JSONException {
+    public void updateFilters(JSONArray jFilters) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TBL_FILTERS);
 
+        String query = "";
+        String cmd = "INSERT INTO " + TBL_FILTERS + "(" +
+                COL_FILTER_ID + ","+ COL_FILTER_NAME +", " + COL_FILTER_QUAL + ") ";
+
         for (int i=0; i<jFilters.length(); i++) {
 
-            JSONObject jObj = jFilters.getJSONObject(i);
-            jObj.getString("");
+            JSONObject jObj = null;
+            try {
+                jObj = jFilters.getJSONObject(i);
+
+
+                if (i > 0) query.concat("UNION ");
+                query.concat(String.format("VALUES('%s','%s','%s') ",
+                                jObj.getString(""),
+                                jObj.getString(""),
+                                jObj.getString(""))
+                );
+
+                Log.d("DB UPDATE FILTERS", query);
+                db.execSQL(query);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
         }
 
     }
