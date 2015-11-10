@@ -123,11 +123,26 @@ public class JSONParser {
 
         conn.disconnect();
 
+        Boolean bArrErr = false;
         // try parse the string to a JSON object
         try {
             jArr = new JSONArray(result.toString());
         } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
+            bArrErr = true;
+            Log.d("JSON Parser", "Error parsing array " + e.toString());
+        }
+
+        if (bArrErr == true) {
+            try {
+                jObj = new JSONObject(result.toString());
+                jArr = jObj.getJSONArray("");
+
+            } catch (JSONException e) {
+                Log.e("JSON Parser", "Error parsing data from result " + e.toString());
+                e.printStackTrace();
+                return null;
+            }
+
         }
 
         // return JSON Object

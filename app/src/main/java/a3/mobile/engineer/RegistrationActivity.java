@@ -50,7 +50,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 });
         ssm.getFilterList();
 
-        //finish();
+        finish();
     }
 
     private void clearFields() {

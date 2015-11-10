@@ -38,7 +38,7 @@ public class DatabaseHepler extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + TBL_FILTERS);
 
         String query = "";
-        String cmd = "INSERT INTO " + TBL_FILTERS + "(" +
+        String cmd = "INSERT INTO " + TBL_FILTERS + " (" +
                 COL_FILTER_ID + ","+ COL_FILTER_NAME +", " + COL_FILTER_QUAL + ") ";
 
         for (int i=0; i<jFilters.length(); i++) {
@@ -47,22 +47,25 @@ public class DatabaseHepler extends SQLiteOpenHelper {
             try {
                 jObj = jFilters.getJSONObject(i);
 
-
-                if (i > 0) query.concat("UNION ");
-                query.concat(String.format("VALUES('%s','%s','%s') ",
-                                jObj.getString("FilterID"),
-                                jObj.getString("FilterName"),
-                                "")
-                );
-
-                Log.d("DB UPDATE FILTERS", query);
-                db.execSQL(query);
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
+            try{
+                ContentValues values = new ContentValues();
+                values.put(COL_FILTER_ID,   jObj.getString("FilterID"));
+                values.put(COL_FILTER_NAME, jObj.getString("FilterName"));
+                values.put(COL_FILTER_QUAL, "");
+                db.insert(TBL_FILTERS, null, values);
+
+            }catch (Exception ex){
+                Log.e("DB UPDATE FILTERS", ex.toString());
+            }
+
         }
+
+        db.close();
+        Log.d("DB UPDATE FILTERS", "Complete");
 
     }
 
@@ -97,9 +100,14 @@ public class DatabaseHepler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_PARAM_TABLE = "CREATE TABLE IF NOT EXISTS " +
-                "TBL_PARAM (PARAM_ID INTEGER PRIMARY KEY," +
+                TBL_PARAM + " (PARAM_ID INTEGER PRIMARY KEY," +
                 "PARAM_NAME TEXT, PARAM_VALUE TEXT" + ")";
         db.execSQL(CREATE_PARAM_TABLE);
+
+        String CREATE_FILTERS_TABLE = "CREATE TABLE IF NOT EXISTS " +
+                TBL_FILTERS + " ("+ COL_FILTER_ID +" TEXT," +
+                COL_FILTER_NAME + " TEXT, " + COL_FILTER_QUAL + " TEXT" + ")";
+        db.execSQL(CREATE_FILTERS_TABLE);
     }
 
     @Override
