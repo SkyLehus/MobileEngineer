@@ -50,9 +50,9 @@ public class DatabaseHepler extends SQLiteOpenHelper {
 
                 if (i > 0) query.concat("UNION ");
                 query.concat(String.format("VALUES('%s','%s','%s') ",
-                                jObj.getString(""),
-                                jObj.getString(""),
-                                jObj.getString(""))
+                                jObj.getString("FilterID"),
+                                jObj.getString("FilterName"),
+                                "")
                 );
 
                 Log.d("DB UPDATE FILTERS", query);
