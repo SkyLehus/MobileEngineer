@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     static final private int RESULT_CODE = 0;
-    private static final String INC_NUMBER = "catname"; // Верхний текст
+    private static final String INC_NUMBER = "number"; // Верхний текст
     private static final String DESCRIPTION = "description"; // ниже главного
     private ArrayList<HashMap<String, Object>> mList;
 

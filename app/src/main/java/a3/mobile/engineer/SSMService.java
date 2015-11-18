@@ -108,10 +108,11 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
     @Override
     protected void onPreExecute() {
+        super.onPreExecute();
         Log.d("SSMSERVICE","onPreExecute");
         pDialog = new ProgressDialog(context);
         pDialog.setMessage(progressMessage);
-        pDialog.setIndeterminate(false);
+        //pDialog.setIndeterminate(false);
         pDialog.setCancelable(false);
         pDialog.show();
     }
@@ -127,7 +128,6 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
             if (json != null) {
                 Log.d("JSON result", json.toString());
-
                 return json;
             }
 
@@ -139,16 +139,30 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
     }
 
     @Override
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+        Log.d("SSMSERVICE", "Progress update " + values.toString());
+    }
+
+    protected void hideProgress() {
+        //if (pDialog != null && pDialog.isShowing()) {
+            // !!! ПРИЛОЖЕНИЕ ПАДАЕТ ПРИ ВЫЗОВЕ dismiss, ДИАЛОГ ЗАКРЫВАЕТСЯ САМ, КАК ТОЛЬКО ЗАВЕРШИТСЯ ASYNCTASK
+            // pDialog.dismiss();
+            // !!!
+            Log.d("SSMSERVICE", "Progress dialog finished");
+        //}
+    }
+
+    @Override
     protected void onPostExecute(JSONArray json) {
+        super.onPostExecute(json);
 
         Log.d("SSMSERVICE","onPostExecute");
 
         int success = 0;
         String message = "";
 
-        if (pDialog != null && pDialog.isShowing()) {
-            pDialog.dismiss();
-        }
+        hideProgress();
 
         if (json != null) {
             /*Toast.makeText(context, json.toString(),
@@ -160,6 +174,8 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
             } catch (JSONException e) {
                 e.printStackTrace();
             }*/
+
+            Log.d("SSMSERVICE", "json exist");
             delegate.processFinish(json);
 
         } else {
