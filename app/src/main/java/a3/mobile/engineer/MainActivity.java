@@ -33,7 +33,8 @@ public class MainActivity extends AppCompatActivity
     private static final String DESCRIPTION = "description"; // ниже главного
     private ArrayList<HashMap<String, Object>> mList;
 
-    private void refreshData(){
+    private void refreshData() {
+
         //SSMSErvice ssm = new SSMSErvice(MainActivity.this, "Administrator","Qwerty123");
         //ssm.checkConnection();
 

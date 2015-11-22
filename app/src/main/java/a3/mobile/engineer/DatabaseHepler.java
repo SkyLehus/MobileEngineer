@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by asus on 31.10.2015.
@@ -67,6 +68,35 @@ public class DatabaseHepler extends SQLiteOpenHelper {
         db.close();
         Log.d("DB UPDATE FILTERS", "Complete");
 
+    }
+
+    public List<Filter> getFilterListData() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  " +
+                COL_FILTER_ID + "," +
+                COL_FILTER_NAME + "," +
+                COL_FILTER_QUAL +
+                " FROM " + TBL_FILTERS;
+
+        List<Filter> filters = new ArrayList<Filter>() ;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+// looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Filter f  = new Filter();
+                f.setID(cursor.getString(cursor.getColumnIndex(COL_FILTER_ID)));
+                f.setName(cursor.getString(cursor.getColumnIndex(COL_FILTER_NAME)));
+                f.setQual(cursor.getString(cursor.getColumnIndex(COL_FILTER_QUAL)));
+                filters.add(f);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return filters;
     }
 
     public String getParamVal(String paramName) {
