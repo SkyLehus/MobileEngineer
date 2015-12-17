@@ -14,14 +14,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by asus on 31.10.2015.
- */
 public class DatabaseHepler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "engineer.db";
     private static final String TBL_PARAM = "TBL_PARAM";
+    private static final String COL_PARAM_ID = "PARAM_ID";
+    private static final String COL_PARAM_VALUE = "PARAM_VALUE";
+    private static final String COL_PARAM_NAME = "PARAM_NAME";
 
     private static final String TBL_FILTERS = "TBL_FILTERS";
     private static final String COL_FILTER_ID = "FILTER_ID";
@@ -70,7 +70,7 @@ public class DatabaseHepler extends SQLiteOpenHelper {
 
     }
 
-    public List<Filter> getFilterListData() {
+    public ArrayList<Filter> getFilterListData() {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -80,9 +80,10 @@ public class DatabaseHepler extends SQLiteOpenHelper {
                 COL_FILTER_QUAL +
                 " FROM " + TBL_FILTERS;
 
-        List<Filter> filters = new ArrayList<Filter>() ;
+        ArrayList<Filter> filters = new ArrayList<Filter>() ;
         Cursor cursor = db.rawQuery(selectQuery, null);
-// looping through all rows and adding to list
+
+        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 Filter f  = new Filter();
@@ -100,13 +101,14 @@ public class DatabaseHepler extends SQLiteOpenHelper {
     }
 
     public String getParamVal(String paramName) {
-        String query = "Select * FROM " + TBL_PARAM + " WHERE PARAM_NAME = \"" + paramName + "\"";
+        String query = "Select * FROM " + TBL_PARAM + " WHERE " + COL_PARAM_NAME +  " = \"" + paramName + "\"";
         String paramValue;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
+        int colIndex = cursor.getColumnIndex(COL_PARAM_VALUE);
         if (cursor.moveToFirst()) {
             cursor.moveToFirst();
-            paramValue = cursor.getString(0);
+            paramValue = cursor.getString(colIndex);
             cursor.close();
         } else {
             paramValue = null;
@@ -118,11 +120,11 @@ public class DatabaseHepler extends SQLiteOpenHelper {
     public void setParamVal(String paramName, String paramValue) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TBL_PARAM + " WHERE PARAM_NAME = \"" + paramName + "\"");
+        db.execSQL("DELETE FROM " + TBL_PARAM + " WHERE " + COL_PARAM_NAME + " = \"" + paramName + "\"");
 
         ContentValues values = new ContentValues();
-        values.put("PARAM_NAME", paramName);
-        values.put("PARAM_VALUE", paramValue);
+        values.put(COL_PARAM_NAME, paramName);
+        values.put(COL_PARAM_VALUE, paramValue);
         db.insert(TBL_PARAM, null, values);
         db.close();
     }
@@ -130,8 +132,8 @@ public class DatabaseHepler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_PARAM_TABLE = "CREATE TABLE IF NOT EXISTS " +
-                TBL_PARAM + " (PARAM_ID INTEGER PRIMARY KEY," +
-                "PARAM_NAME TEXT, PARAM_VALUE TEXT" + ")";
+                TBL_PARAM + " (" + COL_PARAM_ID + " INTEGER PRIMARY KEY," +
+                COL_PARAM_NAME + " TEXT, " + COL_PARAM_VALUE + " TEXT" + ")";
         db.execSQL(CREATE_PARAM_TABLE);
 
         String CREATE_FILTERS_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -142,7 +144,7 @@ public class DatabaseHepler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS TBL_PARAM");
+        db.execSQL("DROP TABLE IF EXISTS " + TBL_PARAM);
         onCreate(db);
     }
 }

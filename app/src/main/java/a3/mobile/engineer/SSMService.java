@@ -1,10 +1,6 @@
 package a3.mobile.engineer;
 
 
-/**
- * Created by Alexey.Babkin on 28.10.2015.
- */
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -15,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -32,7 +29,7 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
 
     private static final String API_KEY = "e8e6a311d54985a067ece5a008da280b";
-    private static final String TARGET_URL = "http://rt.atrinity.ru/api/request";
+    private static final String TARGET_URL = "http://avb.a3ssm.ru/api/request";//"http://rt.atrinity.ru/api/request";
 
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
@@ -141,16 +138,16 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
-        Log.d("SSMSERVICE", "Progress update " + values.toString());
+        Log.d("SSMSERVICE", "Progress update " + Arrays.toString(values));
     }
 
     protected void hideProgress() {
-        //if (pDialog != null && pDialog.isShowing()) {
+        if (pDialog != null && pDialog.isShowing()) {
             // !!! ПРИЛОЖЕНИЕ ПАДАЕТ ПРИ ВЫЗОВЕ dismiss, ДИАЛОГ ЗАКРЫВАЕТСЯ САМ, КАК ТОЛЬКО ЗАВЕРШИТСЯ ASYNCTASK
-            // pDialog.dismiss();
+            pDialog.dismiss();
             // !!!
             Log.d("SSMSERVICE", "Progress dialog finished");
-        //}
+        }
     }
 
     @Override

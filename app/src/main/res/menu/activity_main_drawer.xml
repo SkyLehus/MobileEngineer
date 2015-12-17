@@ -2,23 +2,34 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_camara" android:icon="@android:drawable/ic_menu_camera"
-            android:title="Import" />
-        <item android:id="@+id/nav_gallery" android:icon="@android:drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item android:id="@+id/nav_slideshow" android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item android:id="@+id/nav_manage" android:icon="@android:drawable/ic_menu_manage"
-            android:title="Tools" />
+        <item android:id="@+id/nav_shop" android:icon="@android:drawable/ic_menu_camera"
+            android:title="Магазин" />
+        <item android:id="@+id/nav_orders" android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Мои заказы" />
+        <item android:id="@+id/nav_requests" android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Мои заявки" />
+        <item android:id="@+id/nav_approve" android:icon="@android:drawable/ic_menu_manage"
+            android:title="Согласование" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/menu_push_settings">
         <menu>
-            <item android:id="@+id/nav_share" android:icon="@android:drawable/ic_menu_share"
-                android:title="Share" />
-            <item android:id="@+id/nav_send" android:icon="@android:drawable/ic_menu_send"
-                android:title="Send" />
+            <item android:id="@+id/nav_share"
+                android:icon="@android:drawable/ic_menu_info_details"
+                android:title="@string/menu_settings_send_push"/>
         </menu>
     </item>
+
+    <item android:title="@string/menu_login_settings">
+        <menu>
+            <item android:id="@+id/nav_change_pin"
+                android:title="@string/menu_settings_change_pin"
+                android:icon="@android:drawable/ic_menu_rotate"/>
+
+            <item android:id="@+id/nav_registration"
+                android:title="@string/menu_settings_registration" />
+        </menu>
+    </item>
+
 
 </menu>

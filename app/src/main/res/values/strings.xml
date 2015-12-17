@@ -15,16 +15,30 @@
     <string name="prompt_password">Пароль</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Вход</string>
+
+    <string name="error_login_failed">Вход не выполнен! Попробуйте повторить чуть позже.</string>
     <string name="error_invalid_login">Не верный логин</string>
-    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_email">Не правильный формат email</string>
     <string name="error_invalid_password">Введите пароль</string>
     <string name="error_incorrect_password">Не верный пароль</string>
     <string name="error_field_required">Обязательное поле</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="error_no_data">Нет данных</string>
     <string name="prompt_pin">ПИН код (4 цифры)</string>
     <string name="action_save">Сохранить</string>
     <string name="register_helptext">Для входа в систему введите доменный логин с учетом регистра и пароль</string>
     <string name="register_pin_helptext">При следующем входе потребуется только ПИН код</string>
+    <string name="menu_push_settings">Настройки оповещений</string>
+    <string name="menu_settings_send_push">Получать push оповещения</string>
+    <string name="menu_settings_change_pin">Смена ПИН кода</string>
+    <string name="menu_settings_registration">Смена логина / пароля</string>
+    <string name="menu_login_settings">Параметры входа</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_tab">Mobile Engineer</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
 </resources>

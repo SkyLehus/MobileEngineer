@@ -1,12 +1,19 @@
 package a3.mobile.engineer;
 
-/**
- * Created by asus on 22.11.2015.
- */
 public class Filter {
     private String ID;
     private String Name;
     private String Qual;
+
+    public Filter() {
+
+    }
+
+    public Filter(String ID, String Name) {
+        this.ID = ID;
+        this.Name = Name;
+    }
+
 
     public void setID(String ID) {
         this.ID = ID;
