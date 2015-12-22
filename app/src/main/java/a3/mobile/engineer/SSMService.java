@@ -29,10 +29,8 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
 
     private static final String API_KEY = "e8e6a311d54985a067ece5a008da280b";
-    private static final String TARGET_URL = "http://avb.a3ssm.ru/api/request";//"http://rt.atrinity.ru/api/request";
+    private static final String TARGET_URL = "http://beta.a3ssm.ru/api/request"; // "http://rt.atrinity.ru/api/request"; //"http://avb.a3ssm.ru/api/request";//
 
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
 
     private Context context;
     private String login;

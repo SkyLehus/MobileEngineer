@@ -46,21 +46,36 @@ public class RegistrationActivity extends AppCompatActivity {
         AutoCompleteTextView ePin = (AutoCompleteTextView) findViewById(R.id.editPin);
 
 
-        SSMService ssm = new SSMService(RegistrationActivity.this, "y_rykov", "123",
+        String mLogin = eLogin.getText().toString();
+        String mPassw = ePassw.getText().toString();
+
+        SSMService ssm = new SSMService(RegistrationActivity.this, mLogin, mPassw,
                 new SSMService.AsyncResponse() {
                     @Override
                     public void processFinish(JSONArray output) {
                         if (output != null) {
-                            //Toast.makeText(RegistrationActivity.this, output, Toast.LENGTH_LONG).show();
                             Log.d("REGISTARTION", "OK");
 
                             try {
                                 JSONObject item = output.getJSONObject(0);
+
+                                if (item.has("error")) {
+                                    String err_string = item.getString("error");
+                                    Toast.makeText(RegistrationActivity.this, err_string, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+                                // Успешная регистрация, сохраняем логин в локальную базу
                                 DatabaseHepler db = new DatabaseHepler(RegistrationActivity.this, null, null, 1);
                                 db.setParamVal("Login", item.getString("Login"));
                                 db.setParamVal("UserID", item.getString("UserID"));
+
                             } catch (JSONException e) {
-                                Log.e("REGISTARTION", e.toString());
+                                Log.e("REGISTARTION FAILED", e.toString());
+                                e.printStackTrace();
+                                String err_string = e.getMessage().toString();
+                                Toast.makeText(RegistrationActivity.this, err_string, Toast.LENGTH_LONG).show();
+                                return;
                             }
 
                             // очистка введенных данных
@@ -68,13 +83,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
                             finish();
                         } else {
-                            Log.d("REGISTARTION", "FAILED");
-                            String err_string = getResources().getString(R.string.error_login_failed);
-                            Toast.makeText(RegistrationActivity.this, err_string, Toast.LENGTH_LONG).show();
+                            Log.d("REGISTARTION FAILED", "NO DATA");
+                            String no_data_string = getResources().getString(R.string.error_login_failed);
+                            Toast.makeText(RegistrationActivity.this, no_data_string, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
-        //ssm.getFilterList();
+
         ssm.checkConnection();
     }
 

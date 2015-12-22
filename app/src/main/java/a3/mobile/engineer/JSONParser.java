@@ -28,6 +28,8 @@ public class JSONParser {
     JSONArray jArr = null;
     StringBuilder sbParams;
     String paramsString;
+    String errMessage;
+    Boolean bErr = false;
 
     public JSONArray makeHttpRequest(String url, String method,
                                       HashMap<String, String> params) {
@@ -43,6 +45,7 @@ public class JSONParser {
                         .append(URLEncoder.encode(params.get(key), charset));
 
             } catch (UnsupportedEncodingException e) {
+
                 e.printStackTrace();
             }
             i++;
@@ -74,6 +77,9 @@ public class JSONParser {
                 wr.close();
 
             } catch (IOException e) {
+                bErr = true;
+                errMessage = e.getMessage();
+                Log.e("JSONArray POST", e.toString());
                 e.printStackTrace();
             }
         }
@@ -100,6 +106,9 @@ public class JSONParser {
                 conn.connect();
 
             } catch (IOException e) {
+                bErr = true;
+                errMessage = e.getMessage();
+                Log.e("JSONArray GET", e.toString());
                 e.printStackTrace();
             }
 
@@ -118,6 +127,8 @@ public class JSONParser {
             Log.d("JSON Parser", "result: " + result.toString());
 
         } catch (IOException e) {
+            bErr = true;
+            errMessage = e.getMessage();
             e.printStackTrace();
         }
 
@@ -128,24 +139,27 @@ public class JSONParser {
         try {
             jArr = new JSONArray(result.toString());
         } catch (JSONException e) {
-            bArrErr = true;
-            Log.d("JSON Parser", "Error parsing array " + e.toString());
+            bErr = true;
+            errMessage = e.getMessage();
+            Log.e("JSON Parser", "Error parsing array " + e.toString());
+            e.printStackTrace();
         }
 
-        if (bArrErr == true) {
+        if (bErr == true) {
             try {
-                jObj = new JSONObject(result.toString());
-                jArr = jObj.getJSONArray("");
-
+                // вернуть статус из описание ошибки
+                JSONObject jErr = new JSONObject();
+                jErr.put("error", errMessage);
+                jArr.put(jErr);
+                return jArr;
             } catch (JSONException e) {
                 Log.e("JSON Parser", "Error parsing data from result " + e.toString());
                 e.printStackTrace();
                 return null;
             }
-
         }
 
-        // return JSON Object
+        // return JSON Array
         return jArr;
     }
 }
