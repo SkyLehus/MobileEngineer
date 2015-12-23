@@ -36,6 +36,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import layout.OneFragment;
 
 
 public class MainActivity extends AppCompatActivity
@@ -47,10 +50,20 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<HashMap<String, Object>> incidentListArray;
 
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+    //private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
 
     private ActionBar actionBar;
+
+    private int[] tabIcons = {
+            //R.drawable.ic_tab_favourite,
+            //R.drawable.ic_tab_call,
+            //R.drawable.ic_tab_contacts
+    };
 
 
     @Override
@@ -63,15 +76,16 @@ public class MainActivity extends AppCompatActivity
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        //mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        viewPager = (ViewPager) findViewById(R.id.container);
+        setupViewPager(viewPager);//viewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
+        setupTabIcons();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -116,36 +130,50 @@ public class MainActivity extends AppCompatActivity
 
         if (login == null) {
             // переход к регистрации
-            Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
-            startActivityForResult(intent, RESULT_CODE);
+            navigateToRegister();
         } else {
             refreshData();
         }
     }
 
+    private void navigateToRegister() {
+        Intent intent = new Intent(MainActivity.this, RegistrationActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivityForResult(intent, RESULT_CODE);
+    }
+
     private void refreshData() {
+
 
         SSMService ssm = new SSMService(MainActivity.this, "y_rykov", "123",
                 new SSMService.AsyncResponse() {
                     @Override
                     public void processFinish(JSONArray output) {
                         if (output != null) {
-                            //Toast.makeText(RegistrationActivity.this, output, Toast.LENGTH_LONG).show();
                             Log.d("REGISTARTION", "OK");
 
                             try {
                                 JSONObject item = output.getJSONObject(0);
 
+                                if (item.has("error")) {
+                                    String err_string = item.getString("error");
+                                    Toast.makeText(MainActivity.this, err_string, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
                                 item.getString("Login");
                                 item.getString("UserID");
+
+
                             } catch (JSONException e) {
                                 Log.e("", e.toString());
                             }
 
                         } else {
                             Log.d("REGISTARTION", "FAILED");
-                            String err_string = getResources().getString(R.string.error_no_data);
-                            Toast.makeText(MainActivity.this, err_string, Toast.LENGTH_LONG).show();
+                            String no_data_string = getResources().getString(R.string.error_no_data);
+                            Toast.makeText(MainActivity.this, no_data_string, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -153,7 +181,55 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+
+
+    private void setupTabIcons() {
+        //tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        //tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+        //tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        adapter.addFragment(new OneFragment(), "МАГАЗИН");
+        adapter.addFragment(new TwoFragment(), "ЗАКАЗЫ");
+        adapter.addFragment(new ThreeFragment(), "ОБРАЩЕНИЯ");
+        adapter.addFragment(new FourFragment(), "СОГЛАСОВАНИЕ");
+        viewPager.setAdapter(adapter);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+    }
+
+    /*public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -186,7 +262,7 @@ public class MainActivity extends AppCompatActivity
             }
             return null;
         }
-    }
+    }*/
 
     public static class PlaceholderFragment extends Fragment {
         /**
@@ -221,40 +297,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void refreshDataHandler() {
-        ListView listView = (ListView) findViewById(R.id.mainListView);
 
-        // создаем массив списков
-        incidentListArray = new ArrayList<HashMap<String, Object>>();
-        HashMap<String, Object> hm;
-
-        hm = new HashMap<>();
-        hm.put(INC_NUMBER, "INC000000111"); // Название
-        hm.put(DESCRIPTION, "Рыжий и хитрый"); // Описание
-        incidentListArray.add(hm);
-
-        hm = new HashMap<>();
-        hm.put(INC_NUMBER, "INC000000111");
-        hm.put(DESCRIPTION, "Слушает да ест");
-        incidentListArray.add(hm);
-
-        hm = new HashMap<>();
-        hm.put(INC_NUMBER, "INC000000521");
-        hm.put(DESCRIPTION, "Спит и мурлыкает");
-        incidentListArray.add(hm);
-
-        hm = new HashMap<>();
-        hm.put(INC_NUMBER, "INC000000478");
-        hm.put(DESCRIPTION, "Болеет за Барселону");
-        incidentListArray.add(hm);
-
-        SimpleAdapter adapter = new SimpleAdapter(this, incidentListArray,
-                R.layout.item_incident, new String[]{INC_NUMBER, DESCRIPTION},
-                new int[]{R.id.itemNumber, R.id.itemDescription});
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(itemClickListener);
-    }
 
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -275,7 +318,7 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-       refreshDataHandler();
+       //refreshDataHandler();
     }
 
     @Override

@@ -10,14 +10,14 @@
     tools:showIn="@layout/app_bar_main"
     tools:context=".MainActivity">
 
-
+<!--
 
             <ListView android:id="@+id/mainListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/item_incident">
             </ListView>
-
+-->
 
 
 
