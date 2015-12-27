@@ -77,10 +77,8 @@ public class JSONParser {
                 wr.close();
 
             } catch (IOException e) {
-                bErr = true;
-                errMessage = e.getMessage();
-                Log.e("JSONArray POST", e.toString());
-                e.printStackTrace();
+                errMessage = e.getMessage().toString();
+                return makeErrResponse(errMessage);
             }
         }
         else if(method.equals("GET")){
@@ -106,10 +104,7 @@ public class JSONParser {
                 conn.connect();
 
             } catch (IOException e) {
-                bErr = true;
-                errMessage = e.getMessage();
-                Log.e("JSONArray GET", e.toString());
-                e.printStackTrace();
+                return makeErrResponse(errMessage);
             }
 
         }
@@ -146,20 +141,25 @@ public class JSONParser {
         }
 
         if (bErr == true) {
-            try {
-                // вернуть статус из описание ошибки
-                JSONObject jErr = new JSONObject();
-                jErr.put("error", errMessage);
-                jArr.put(jErr);
-                return jArr;
-            } catch (JSONException e) {
-                Log.e("JSON Parser", "Error parsing data from result " + e.toString());
-                e.printStackTrace();
-                return null;
-            }
+                return makeErrResponse(errMessage);
         }
 
         // return JSON Array
         return jArr;
+    }
+
+    private JSONArray makeErrResponse(String errMeessage) {
+        // вернуть статус из описание ошибки
+        JSONArray jArr = new JSONArray();
+        JSONObject jErr = new JSONObject();
+        try {
+            jErr.put("error", errMessage);
+            jArr.put(jErr);
+            return jArr;
+        } catch (JSONException e) {
+            Log.e("JSON Parser", "Error parsing data from result " + e.toString());
+            e.printStackTrace();
+            return null;
+        }
     }
 }

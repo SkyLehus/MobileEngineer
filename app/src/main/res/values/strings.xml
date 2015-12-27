@@ -26,6 +26,7 @@
         completions."
     </string>
     <string name="error_no_data">Нет данных</string>
+    <string name="error_no_filter_data">Информация о фильтрах не найдена</string>
     <string name="prompt_pin">ПИН код (4 цифры)</string>
     <string name="action_save">Сохранить</string>
     <string name="register_helptext">Для входа в систему введите доменный логин с учетом регистра и пароль</string>

@@ -1,6 +1,11 @@
 package a3.mobile.engineer;
 
 public class Filter {
+
+    public final static String ATTRIBUTE_ID = "ID";
+    public final static String ATTRIBUTE_NAME = "Name";
+    public final static String ATTRIBUTE_QUAL = "Qual";
+
     private String ID;
     private String Name;
     private String Qual;

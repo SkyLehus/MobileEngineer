@@ -14,7 +14,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,20 +27,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import layout.OneFragment;
 
 
 public class MainActivity extends AppCompatActivity
@@ -132,7 +125,7 @@ public class MainActivity extends AppCompatActivity
             // переход к регистрации
             navigateToRegister();
         } else {
-            refreshData();
+            // TODO: определить, нужно ли здесь что-либо загружать
         }
     }
 
@@ -142,47 +135,6 @@ public class MainActivity extends AppCompatActivity
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivityForResult(intent, RESULT_CODE);
     }
-
-    private void refreshData() {
-
-
-        SSMService ssm = new SSMService(MainActivity.this, "y_rykov", "123",
-                new SSMService.AsyncResponse() {
-                    @Override
-                    public void processFinish(JSONArray output) {
-                        if (output != null) {
-                            Log.d("REGISTARTION", "OK");
-
-                            try {
-                                JSONObject item = output.getJSONObject(0);
-
-                                if (item.has("error")) {
-                                    String err_string = item.getString("error");
-                                    Toast.makeText(MainActivity.this, err_string, Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-
-                                item.getString("Login");
-                                item.getString("UserID");
-
-
-                            } catch (JSONException e) {
-                                Log.e("", e.toString());
-                            }
-
-                        } else {
-                            Log.d("REGISTARTION", "FAILED");
-                            String no_data_string = getResources().getString(R.string.error_no_data);
-                            Toast.makeText(MainActivity.this, no_data_string, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-        //ssm.getFilterList();
-
-    }
-
-
-
 
     private void setupTabIcons() {
         //tabLayout.getTabAt(0).setIcon(tabIcons[0]);
@@ -229,40 +181,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show total pages.
-            return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "МАГАЗИН";
-                case 1:
-                    return "ЗАКАЗЫ";
-                case 2:
-                    return "ОБРАЩЕНИЯ";
-                case 3:
-                    return "СОГЛАС.";
-            }
-            return null;
-        }
-    }*/
 
     public static class PlaceholderFragment extends Fragment {
         /**

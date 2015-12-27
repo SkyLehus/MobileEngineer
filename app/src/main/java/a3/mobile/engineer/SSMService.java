@@ -29,7 +29,10 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
 
     private static final String API_KEY = "e8e6a311d54985a067ece5a008da280b";
-    private static final String TARGET_URL = "http://beta.a3ssm.ru/api/request"; // "http://rt.atrinity.ru/api/request"; //"http://avb.a3ssm.ru/api/request";//
+    private static final String TARGET_URL = "http://beta.a3ssm.ru/api/"; // "http://rt.atrinity.ru/api/request"; //"http://avb.a3ssm.ru/api/request";//
+    public static final String TARGET_OBJECT_REQUEST = "request";
+
+    private String mTargetObject;
 
 
     private Context context;
@@ -55,26 +58,29 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
 
     public void checkConnection() {
+        mTargetObject = TARGET_OBJECT_REQUEST;
         params.put("Action","CHECK_AUTH");
         params.put("Fields[FilterID]", "123");
         this.execute();
     }
 
-    public void getFilterList() {
+    public void getFilterList(String targetObject) {
+        mTargetObject = targetObject;
         params.put("Action", "GET_FILTER_LIST");
         this.execute();
     }
 
-    public void getList(String FilterID) {
+    public void getList(String targetObject, String FilterID) {
+        mTargetObject = targetObject;
 
     }
 
-    public void getInfo(String RequestID, String RequestNumber) {
-
+    public void getInfo(String targetObject, String RequestID, String RequestNumber) {
+        // TODO: реализация метода получения детальной информации по объекту (заявки)
     }
 
     public void addNewRequest(String comment) {
-
+        // TODO: реализация метода создания нового объекта (заявки)
     }
 
     public void addAttachment(String RequestID) {
@@ -82,22 +88,22 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
     }
 
     public void addComment() {
-
+        // TODO: реализация метода добавления комментария к объекту (заявке)
     }
     public void resolve() {
-
+        // TODO: реализация метода решения заявки
     }
     public void assign(){
-
+        // TODO: реализация метода назначения группы/исполнителя заявки
     }
     public void toWork(){
-
+        // TODO: реализация метода изменения статуса заявки "В работе"
     }
     public void getTeamMembers() {
-
+        // TODO: реализация метода получпения списка состава группы исполнителей по заявке
     }
     public void cancel() {
-
+        // TODO: реализация метода отмены заявки
     }
 
 
@@ -119,7 +125,7 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
             Log.d("SSMSERVICE","doInBackground");
 
             JSONArray json = jsonParser.makeHttpRequest(
-                    TARGET_URL, "POST", params);
+                    TARGET_URL + mTargetObject, "POST", params);
 
             if (json != null) {
                 Log.d("JSON result", json.toString());
