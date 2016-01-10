@@ -12,7 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import a3.mobile.engineer.classes.Filter;
 
 public class DatabaseHepler extends SQLiteOpenHelper {
 

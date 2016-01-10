@@ -65,7 +65,7 @@ public class JSONParser {
                 conn.setRequestProperty("Accept-Charset", charset);
 
                 conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
+                conn.setConnectTimeout(5000);
 
                 conn.connect();
 
@@ -141,14 +141,16 @@ public class JSONParser {
         }
 
         if (bErr == true) {
+                Log.d("JSON Parser", "ERROR");
                 return makeErrResponse(errMessage);
         }
 
+        Log.d("JSON Parser", "COMPLETE");
         // return JSON Array
         return jArr;
     }
 
-    private JSONArray makeErrResponse(String errMeessage) {
+    protected JSONArray makeErrResponse(String errMeessage) {
         // вернуть статус из описание ошибки
         JSONArray jArr = new JSONArray();
         JSONObject jErr = new JSONObject();
@@ -159,7 +161,7 @@ public class JSONParser {
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data from result " + e.toString());
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 }

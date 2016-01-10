@@ -72,7 +72,10 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
     public void getList(String targetObject, String FilterID) {
         mTargetObject = targetObject;
-
+        params.put("Action", "GET_LIST");
+        params.put("Fields[FilterID]", FilterID);
+        params.put("Columns", "RequestNumber,Name,PriorityDisplayName");
+        this.execute();
     }
 
     public void getInfo(String targetObject, String RequestID, String RequestNumber) {

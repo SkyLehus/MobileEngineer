@@ -70,6 +70,11 @@ public class RegistrationActivity extends AppCompatActivity {
                                 db.setParamVal("Login", item.getString("Login"));
                                 db.setParamVal("UserID", item.getString("UserID"));
 
+                                // TODO: сделать шифрование пароля по ПИН коду
+                                AutoCompleteTextView ePassw = (AutoCompleteTextView) findViewById(R.id.editPassword);
+                                AutoCompleteTextView ePin = (AutoCompleteTextView) findViewById(R.id.editPin);
+                                db.setParamVal("Password", ePassw.getText().toString());
+
                             } catch (JSONException e) {
                                 Log.e("REGISTARTION FAILED", e.toString());
                                 e.printStackTrace();

@@ -1,4 +1,4 @@
-package a3.mobile.engineer;
+package a3.mobile.engineer.classes;
 
 public class Filter {
 
