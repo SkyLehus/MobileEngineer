@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import a3.mobile.engineer.classes.Filter;
-import a3.mobile.engineer.classes.Incident;
+import a3.mobile.engineer.classes.Request;
 
 
 public class OneFragment extends Fragment {
@@ -167,8 +167,8 @@ public class OneFragment extends Fragment {
                                 for (int i = 0; i < output.length(); i++) {
                                     item = output.getJSONObject(i);
                                     m = new HashMap<String, Object>();
-                                    m.put(Incident.COL_REQUEST_NUMBER , item.getString(Incident.COL_REQUEST_NUMBER));
-                                    m.put(Incident.COL_NAME, item.getString(Incident.COL_NAME));
+                                    m.put(Request.COL_REQUEST_NUMBER , item.getString(Request.COL_REQUEST_NUMBER));
+                                    m.put(Request.COL_NAME, item.getString(Request.COL_NAME));
                                     incidentListArray.add(m);
                                 }
 
@@ -316,7 +316,7 @@ public class OneFragment extends Fragment {
 
 
         SimpleAdapter adapter = new SimpleAdapter(this.getContext(), incidentListArray,
-                R.layout.item_incident, new String[]{Incident.COL_REQUEST_NUMBER, Incident.COL_NAME},
+                R.layout.item_incident, new String[]{Request.COL_REQUEST_NUMBER, Request.COL_NAME},
                 new int[]{R.id.itemNumber, R.id.itemDescription});
         listView.setAdapter(adapter);
 
