@@ -4,6 +4,7 @@ package a3.mobile.engineer;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,6 +14,8 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
+
+import a3.mobile.engineer.classes.Request;
 
 
 class SSMService extends AsyncTask<String, String, JSONArray> {
@@ -29,7 +32,7 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
 
 
     private static final String API_KEY = "e8e6a311d54985a067ece5a008da280b";
-    private static final String TARGET_URL = "http://beta.a3ssm.ru/api/"; // "http://rt.atrinity.ru/api/request"; //"http://avb.a3ssm.ru/api/request";//
+    private static final String TARGET_URL = "http://avb.a3ssm.ru/api/"; //"http://beta.a3ssm.ru/api/"; // "http://rt.atrinity.ru/api/request"; //"http://avb.a3ssm.ru/api/request";//
     public static final String TARGET_OBJECT_REQUEST = "request";
 
     private String mTargetObject;
@@ -54,6 +57,12 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
         params.put("ApiKey", API_KEY);
         params.put("Login", login);
         params.put("Password", password);
+
+
+        pDialog = new ProgressDialog(context);
+        pDialog.setMessage(progressMessage);
+        //pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
     }
 
 
@@ -67,6 +76,7 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
     public void getFilterList(String targetObject) {
         mTargetObject = targetObject;
         params.put("Action", "GET_FILTER_LIST");
+        params.put("ObjectCode", "300");
         this.execute();
     }
 
@@ -74,7 +84,7 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
         mTargetObject = targetObject;
         params.put("Action", "GET_LIST");
         params.put("Fields[FilterID]", FilterID);
-        params.put("Columns", "RequestNumber,Name,PriorityDisplayName");
+        params.put("Columns", Request.getListColumns());
         this.execute();
     }
 
@@ -113,22 +123,23 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        Log.d("SSMSERVICE","onPreExecute");
-        pDialog = new ProgressDialog(context);
-        pDialog.setMessage(progressMessage);
-        //pDialog.setIndeterminate(false);
-        pDialog.setCancelable(false);
-        pDialog.show();
+        Log.d("SSMSERVICE", "onPreExecute");
+
+
+        //pDialog.show();
     }
 
-    @Override
+    @Override @Nullable
     protected JSONArray doInBackground(String... args) {
 
         try {
+
             Log.d("SSMSERVICE","doInBackground");
+            Log.d("SSMSERVICE","Start gettting data");
 
             JSONArray json = jsonParser.makeHttpRequest(
                     TARGET_URL + mTargetObject, "POST", params);
+            Log.d("SSMSERVICE","Gettting data ends");
 
             if (json != null) {
                 Log.d("JSON result", json.toString());
@@ -136,7 +147,10 @@ class SSMService extends AsyncTask<String, String, JSONArray> {
             }
 
         } catch (Exception e) {
+            JSONArray errResult = JSONParser.makeErrResponse(e.toString());
+            Log.d("JSON Exception", e.toString());
             e.printStackTrace();
+            return errResult;
         }
 
         return null;

@@ -7,4 +7,9 @@
     <color name="secondaryTextColor">#727272</color>
     <color name="whiteTextColor">#FFFFFF</color>
 
+    <color name="colorPriority1">#FA0000</color>
+    <color name="colorPriority2">#FF6F00</color>
+    <color name="colorPriority3">#696900</color>
+    <color name="colorPriority4">#D5D500</color>
+
 </resources>

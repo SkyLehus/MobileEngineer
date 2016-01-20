@@ -10,7 +10,7 @@ public class Request {
     public final static String COL_COMPANY = "CompanyIDName";
     public final static String COL_REQUEST_TYPE = "RequestTypeDisplayName";
     public final static String COL_STATUS = "StatusDisplayName";
-    public final static String COL_PRIORITY = "PriorityDisplayName";
+    public final static String COL_PRIORITY = "Priority";
     public final static String COL_CREATED_AT = "CreatedAt";
     public final static String COL_ASSIGNED_CONTACT = "AssignedContactIDFullName";
     public final static String COL_ASSIGNED_TEAM = "AssignedTeamIDName";
@@ -23,4 +23,9 @@ public class Request {
     public final static String COL_ACTUAL_RECOVERY_TIME = "ActualRecoveryTime";
     public final static String COL_SOLUTION_CODE = "SolutionCodeDisplayName";
     public final static String COL_SOLUTION_DESCRIPTION = "SolutionDescription";
+
+
+    public static String getListColumns() {
+        return COL_REQUEST_NUMBER + "," + COL_NAME + "," + COL_PRIORITY;
+    }
 }

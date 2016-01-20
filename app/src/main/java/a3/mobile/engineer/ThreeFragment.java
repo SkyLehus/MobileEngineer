@@ -1,19 +1,48 @@
 package a3.mobile.engineer;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import a3.mobile.engineer.R;
+import a3.mobile.engineer.classes.Filter;
+import a3.mobile.engineer.classes.Request;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ThreeFragment extends Fragment {
+
+    private ArrayList<Map<String, Object>> incidentListArray;
+
+    private Context context;
+    private View view;
+    private String mFilterID; // код ракурса
+
+    private ArrayList<Map<String, Object>> filterData;
+
 
 
     public ThreeFragment() {
@@ -22,10 +51,211 @@ public class ThreeFragment extends Fragment {
 
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        context = getActivity();
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_three, container, false);
+        view = inflater.inflate(R.layout.fragment_one, container, false);
+
+        // нужно для вызова события onCreateOptionsMenu
+        //setHasOptionsMenu(true);
+
+        /*ListView listView = (ListView) view.findViewById(R.id.mainListView);
+        fillList(listView);*/
+
+        loadFilterMenu();
+
+        return view;
+    }
+
+
+
+    private void loadFilterMenu() {
+        DatabaseHepler db = new DatabaseHepler(getActivity(), null, null, 1);
+        String login = db.getParamVal("Login");
+        String passw = db.getParamVal("Password");
+
+        SSMService ssm = new SSMService(context, login, passw,
+                new SSMService.AsyncResponse() {
+                    @Override
+                    public void processFinish(JSONArray output) {
+                        if (output != null) {
+                            Log.d("GET_FILTER_LIST", "OK");
+
+                            try {
+                                JSONObject item = output.getJSONObject(0);
+
+                                if (item.has("error")) {
+                                    String err_string = item.getString("error");
+                                    Toast.makeText(context, err_string, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+
+
+                                // упаковываем данные в понятную для адаптера структуру
+                                filterData = new ArrayList<Map<String, Object>>(
+                                        output.length());
+                                Map<String, Object> m;
+                                for (int i = 0; i < output.length(); i++) {
+
+                                    // по умполчанию применить первый ракурс в списке
+                                    if (i==0) mFilterID = item.getString(Filter.ATTRIBUTE_ID);
+
+                                    item = output.getJSONObject(i);
+                                    m = new HashMap<String, Object>();
+                                    m.put(Filter.ATTRIBUTE_ID , item.getString(Filter.ATTRIBUTE_ID));
+                                    m.put(Filter.ATTRIBUTE_NAME, item.getString(Filter.ATTRIBUTE_NAME));
+                                    filterData.add(m);
+                                }
+
+
+                                // массив имен атрибутов, из которых будут читаться данные
+                                String[] from = { Filter.ATTRIBUTE_ID, Filter.ATTRIBUTE_NAME};
+
+                                // нужно для вызова события onCreateOptionsMenu
+                                setHasOptionsMenu(true);
+
+                                refresh();
+
+                            } catch (JSONException e) {
+                                Log.e("", e.toString());
+                                String errMessage = e.getMessage().toString();
+                                Toast.makeText(getActivity(), errMessage, Toast.LENGTH_LONG).show();
+                            }
+
+                        } else {
+                            String error_no_filter_data = getResources().getString(R.string.error_no_filter_data);
+                            Toast.makeText(getActivity(), error_no_filter_data, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+
+        ssm.getFilterList(SSMService.TARGET_OBJECT_REQUEST);
+    }
+
+
+    private void refresh() {
+        DatabaseHepler db = new DatabaseHepler(getActivity(), null, null, 1);
+        String login = db.getParamVal("Login");
+        String passw = db.getParamVal("Password");
+
+        SSMService ssm = new SSMService(context, login, passw,
+                new SSMService.AsyncResponse() {
+                    @Override
+                    public void processFinish(JSONArray output) {
+                        if (output != null) {
+                            Log.d("GET_LIST", "OK");
+
+                            try {
+                                JSONObject item = output.getJSONObject(0);
+
+                                if (item.has("error")) {
+                                    String err_string = item.getString("error");
+                                    Toast.makeText(context, err_string, Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+
+                                // упаковываем данные в понятную для адаптера структуру
+                                incidentListArray = new ArrayList<Map<String, Object>>(
+                                        output.length());
+                                Map<String, Object> m;
+                                for (int i = 0; i < output.length(); i++) {
+                                    item = output.getJSONObject(i);
+                                    m = new HashMap<String, Object>();
+
+                                    // короткий номер инцидента
+                                    m.put(Request.COL_REQUEST_NUMBER, IncShortNumber(item.getString(Request.COL_REQUEST_NUMBER)));
+                                    //m.put(Request.COL_REQUEST_NUMBER , item.getString(Request.COL_REQUEST_NUMBER));
+
+                                    // приоритет
+                                    String priority = item.getString(Request.COL_PRIORITY);
+                                    if (priority=="null") priority = "";
+                                    m.put(Request.COL_PRIORITY, priority);
+
+                                    // описание инцидента
+                                    m.put(Request.COL_NAME, item.getString(Request.COL_NAME));
+
+                                    incidentListArray.add(m);
+                                }
+
+                                fillList();
+                                // массив имен атрибутов, из которых будут читаться данные
+                                //String[] from = { Filter.ATTRIBUTE_ID, Filter.ATTRIBUTE_NAME};
+
+                            } catch (JSONException e) {
+                                Log.e("", e.toString());
+                                String errMessage = e.getMessage().toString();
+                                Toast.makeText(getActivity(), errMessage, Toast.LENGTH_LONG).show();
+                            }
+
+                        } else {
+                            String error_no_filter_data = getResources().getString(R.string.error_no_filter_data);
+                            Toast.makeText(getActivity(), error_no_filter_data, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+
+        ssm.getList(SSMService.TARGET_OBJECT_REQUEST, mFilterID);
+
+    }
+
+    public static String IncShortNumber(String IncidentNumber)
+    {
+        // Приводит номер инцидента INC0007000123 к виду INC7000123
+        return IncidentNumber.replaceFirst("0+","");
+    }
+
+    private void applyFilter(int filterID) {
+        Map<String, Object> item = filterData.get(filterID);
+        mFilterID = item.get(Filter.ATTRIBUTE_ID).toString();
+        refresh();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        menu.clear();
+        for (int i=0; i<filterData.size(); i++) {
+            Map<String, Object> item = filterData.get(i);
+            menu.addSubMenu(0, i, i,
+                    item.get(Filter.ATTRIBUTE_NAME).toString());
+        }
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("onOptionsItemSelected", item.toString());
+        applyFilter(item.getItemId());
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void fillList() {
+        ListView listView = (ListView) view.findViewById(R.id.mainListView);
+
+        IncidentListAdapter adapter = new IncidentListAdapter(this.context, incidentListArray,
+                R.layout.item_incident, new String[]{Request.COL_REQUEST_NUMBER, Request.COL_NAME, Request.COL_PRIORITY},
+                new int[]{R.id.itemNumber, R.id.itemDescription, R.id.itemPriority});
+        listView.setAdapter(adapter);
+
+        /*
+        SimpleAdapter adapter = new SimpleAdapter(this.getContext(), incidentListArray,
+                R.layout.item_incident, new String[]{Request.COL_REQUEST_NUMBER, Request.COL_NAME, Request.COL_PRIORITY},
+                new int[]{R.id.itemNumber, R.id.itemDescription, R.id.itemPriority});
+        listView.setAdapter(adapter);*/
+
+        //listView.setOnItemClickListener(itemClickListener);
     }
 
 }

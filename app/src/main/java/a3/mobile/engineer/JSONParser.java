@@ -32,7 +32,7 @@ public class JSONParser {
     Boolean bErr = false;
 
     public JSONArray makeHttpRequest(String url, String method,
-                                      HashMap<String, String> params) {
+                                      HashMap<String, String> params) throws Exception{
 
         sbParams = new StringBuilder();
         int i = 0;
@@ -150,15 +150,18 @@ public class JSONParser {
         return jArr;
     }
 
-    protected JSONArray makeErrResponse(String errMeessage) {
+    public static JSONArray makeErrResponse(String errMsg) {
         // вернуть статус из описание ошибки
         JSONArray jArr = new JSONArray();
         JSONObject jErr = new JSONObject();
         try {
-            jErr.put("error", errMessage);
+            jErr.put("error", errMsg);
             jArr.put(jErr);
             return jArr;
         } catch (JSONException e) {
+            Log.e("JSON Parser", "Error parsing data from result " + e.toString());
+            e.printStackTrace();
+        } catch (Exception e) {
             Log.e("JSON Parser", "Error parsing data from result " + e.toString());
             e.printStackTrace();
         }
